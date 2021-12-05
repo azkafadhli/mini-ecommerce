@@ -19,17 +19,16 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
-
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
 });
 
-Route::get('/status', function () {
-    return ['status' => 'OK'];
+Route::prefix('v1')->middleware('jwt.verify')->group(function () {
+    Route::apiResource('user', 'UserController');
 });
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/status', function () {
+    return ['status' => 'OK'];
 });
