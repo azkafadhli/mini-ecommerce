@@ -23,7 +23,7 @@ class User extends Authenticatable implements JWTSubject {
      *
      * @var array
      */
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'role_id', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
@@ -37,5 +37,8 @@ class User extends Authenticatable implements JWTSubject {
     }
     public function getJWTCustomClaims() {
         return [];
+    }
+    public static function isAdmin(Authenticatable $user) {
+        return $user["role_id"] == 1;
     }
 }
