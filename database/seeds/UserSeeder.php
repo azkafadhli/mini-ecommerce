@@ -10,6 +10,19 @@ class UserSeeder extends Seeder {
      * @return void
      */
     public function run() {
-        factory(User::class, 5)->create();
+        $admin = [
+            'id' => 1,
+            'role_id' => 1,
+            'name' => 'Aidan Brown',
+            'email' => 'aidan.brown@example.com'
+        ];
+        $customer = [
+            'id' => 2,
+            'role_id' => 2,
+            'name' => 'Karolann Windler',
+            'email' => 'karolann.windler@example.com'
+        ];
+        factory(User::class, 1)->create($admin);
+        factory(User::class, 1)->create($customer);
     }
 }
