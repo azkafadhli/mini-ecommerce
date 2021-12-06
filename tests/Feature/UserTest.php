@@ -12,16 +12,21 @@ use RoleSeeder;
 
 class UserTest extends TestCase {
     use RefreshDatabase;
+    private int $users_max_seq;
+    private int $roles_max_seq;
 
     public function setUp(): void {
         parent::setUp();
         DB::statement("ALTER SEQUENCE users_id_seq RESTART WITH 1;");
+        DB::statement("ALTER SEQUENCE roles_id_seq RESTART WITH 1;");
         $this->seed(RoleSeeder::class);
         $this->seed(UserSeeder::class);
+        $this->users_max_seq = DB::table('users')->max('id') + 1;
+        $this->roles_max_seq = DB::table('roles')->max('id') + 1;
     }
     public function tearDown(): void {
-        $max = DB::table('users')->max('id') + 1;
-        DB::statement("ALTER SEQUENCE users_id_seq RESTART WITH $max;");
+        DB::statement("ALTER SEQUENCE users_id_seq RESTART WITH $this->users_max_seq;");
+        DB::statement("ALTER SEQUENCE roles_id_seq RESTART WITH $this->roles_max_seq;");
         parent::tearDown();
     }
     public function __construct() {
@@ -68,5 +73,29 @@ class UserTest extends TestCase {
         $resp
             ->assertStatus(200)
             ->assertJson([['id' => 1]]);
+    }
+    public function testRegisterUserWithInvalidPayload() {
+        $resp = $this
+            ->json(
+                'POST',
+                '/api/v1/user',
+                ['role_id' => 1, 'email' => '123@example', 'name' => 123, 'password' => 'mypassword'],
+                ['Accept' => 'application/json', 'Content-Type' => 'application/json']
+            );
+        $resp->assertStatus(422)->assertJsonStructure(['message', 'errors']);
+    }
+    public function testRegisterUserWithValidPayload() {
+        $this->withoutExceptionHandling();
+        $resp = $this
+            ->json(
+                'POST',
+                '/api/v1/user',
+                ['role_id' => 2, 'email' => '123@gmail.com', 'name' => 123, 'password' => 'mypassword'],
+                ['Accept' => 'application/json', 'Content-Type' => 'application/json']
+            );
+        $resp
+            ->assertStatus(201)
+            ->assertJson(['id' => 3, 'name' => '123', 'email' => '123@gmail.com']);
+        $this->assertDatabaseHas('users', ['id' => 3, 'name' => '123', 'email' => '123@gmail.com']);
     }
 }

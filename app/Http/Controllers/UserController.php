@@ -4,13 +4,10 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index() {
         $user = auth()->user();
         if (!User::isAdmin($user)) {
@@ -19,43 +16,31 @@ class UserController extends Controller {
         return response()->json(User::all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request) {
-        //
+        $validatedData = $request->validate([
+            'email' => ['required', 'unique:users', 'email:rfc,dns'],
+            'name' => ['max:256', ],
+            'role_id' => function($attribute, $value, $fail) {
+                if ($value !== 2) {
+                    $fail($attribute.' is invalid');
+                }
+            },
+            'password' => ['required']
+        ]);
+        $validatedData['password'] =  Hash::make($validatedData['password']);
+        $user = User::create($validatedData);
+        $user->save();
+        return $user;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function show(User $user) {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, User $user) {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(User $user) {
         //
     }
