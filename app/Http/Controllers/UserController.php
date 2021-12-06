@@ -37,8 +37,20 @@ class UserController extends Controller {
         //
     }
 
-    public function update(Request $request, User $user) {
-        //
+    public function update(Request $request, int $id) {
+        $userFromToken = auth()->user();
+        $user = User::find($id);
+        if ($userFromToken['id']===$user['id']) {
+            $validatedData = $request->validate(
+                [
+                    'name' => ['max:256', ],
+                    'email' => ['unique:users', 'email:rfc,dns']
+                ]
+            );
+            $user->update($validatedData);
+            return $user;   
+        }
+        return response()->json(['status' => 'unauthorized'], 401);
     }
 
     public function destroy(User $user) {

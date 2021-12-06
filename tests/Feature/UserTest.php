@@ -31,6 +31,7 @@ class UserTest extends TestCase {
     }
     public function __construct() {
         parent::__construct();;
+        //$this->withoutExceptionHandling();
     }
 
     public function testGetAllUsersWithoutToken() {
@@ -85,7 +86,6 @@ class UserTest extends TestCase {
         $resp->assertStatus(422)->assertJsonStructure(['message', 'errors']);
     }
     public function testRegisterUserWithValidPayload() {
-        $this->withoutExceptionHandling();
         $resp = $this
             ->json(
                 'POST',
@@ -97,5 +97,36 @@ class UserTest extends TestCase {
             ->assertStatus(201)
             ->assertJson(['id' => 3, 'name' => '123', 'email' => '123@gmail.com']);
         $this->assertDatabaseHas('users', ['id' => 3, 'name' => '123', 'email' => '123@gmail.com']);
+    }
+    public function testUpdateUserWithInvalidToken() {
+        /*
+        Invalid token = use token from one user to updating another user
+        */
+        $token = JWTAuth::fromUser(User::where('id', 1)->first());
+        $resp = $this
+            ->withHeader('Authorization', 'Bearer ' . $token)
+            ->json(
+                'PATCH',
+                'api/v1/user/2',
+                ['email' => 'karolann.windler@gmail.com'],
+                ['Accept' => 'application/json', 'Content-Type' => 'application/json']
+            );
+        $resp->assertUnauthorized();
+    }
+    public function testUpdateUserWithValidToken() {
+        /*
+        Valid token = use token from one user to updating own details
+        */
+        $token = JWTAuth::fromUser(User::where('id', 2)->first());
+        $resp = $this
+            ->withHeader('Authorization', 'Bearer ' . $token)
+            ->json(
+                'PATCH',
+                'api/v1/user/2',
+                ['email' => 'karolann.windler@gmail.com'],
+                ['Accept' => 'application/json', 'Content-Type' => 'application/json']
+            );
+        $resp->assertStatus(200);
+        $this->assertDatabaseHas('users', ['email' => 'karolann.windler@gmail.com']);
     }
 }
