@@ -29,10 +29,6 @@ class UserTest extends TestCase {
         DB::statement("ALTER SEQUENCE roles_id_seq RESTART WITH $this->roles_max_seq;");
         parent::tearDown();
     }
-    public function __construct() {
-        parent::__construct();;
-        //$this->withoutExceptionHandling();
-    }
 
     public function testGetAllUsersWithoutToken() {
         $resp = $this->json(
@@ -95,8 +91,9 @@ class UserTest extends TestCase {
             );
         $resp
             ->assertStatus(201)
-            ->assertJson(['id' => 3, 'name' => '123', 'email' => '123@gmail.com']);
-        $this->assertDatabaseHas('users', ['id' => 3, 'name' => '123', 'email' => '123@gmail.com']);
+            ->assertJsonPath('name', 123)
+            ->assertJsonPath('email', '123@gmail.com');
+        $this->assertDatabaseHas('users', ['name' => 123, 'email' => '123@gmail.com']);
     }
     public function testUpdateUserWithInvalidToken() {
         /*

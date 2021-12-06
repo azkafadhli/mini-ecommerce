@@ -53,7 +53,14 @@ class UserController extends Controller {
         return response()->json(['status' => 'unauthorized'], 401);
     }
 
-    public function destroy(User $user) {
-        //
+    public function destroy(int $id) {
+        $userFromToken = auth()->user();
+        $user = User::find($id);
+        if ($userFromToken['id']===$user['id']) {
+            return $user->delete();
+        }
+        return response()->json(['status' => 'unauthorized'], 401);
     }
+
+    public function restore() {}
 }
