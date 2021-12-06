@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Product;
+use App\Category;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller {
@@ -48,9 +49,16 @@ class ProductController extends Controller {
         }
         $validatedData = $request->validate([
             'name' => ['max:256'],
-            'price' => ['numeric', 'gte:0']
+            'price' => ['numeric', 'gte:0'],
+            'category' => ['exists:categories,id']
         ]);
         $product = Product::find($id);
+
+        if (count($validatedData['category']) > 0) {
+            $category = Category::find($validatedData['category']);
+            $product->categories()->toggle($category);
+        }
+        
         $product->update($validatedData);
         return $product;
     }
