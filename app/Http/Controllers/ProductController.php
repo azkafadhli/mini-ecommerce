@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        return Product::select(['id','name'])->get();
     }
 
     /**
@@ -25,7 +25,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // TODO: implement this first to test the JWT token
+        // reference: https://www.avyatech.com/rest-api-with-laravel-8-using-jwt-token/ (Step #12)
     }
 
     /**
@@ -34,9 +35,9 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(int $id)
     {
-        //
+        return Product::with(['categories'])->where('id', $id)->get();
     }
 
     /**

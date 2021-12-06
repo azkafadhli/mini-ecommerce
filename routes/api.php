@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,20 +13,36 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'auth'
-
-], function ($router) {
+Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
 });
 
-Route::prefix('v1')->middleware('jwt.verify')->group(function () {
-    Route::apiResource('user', 'UserController');
-});
+Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
+    Route::apiResources(
+        [
+            'product' => 'ProductController',
+            'category' => 'CategoryController'
+        ],
+        ['only' => ['store', 'update', 'destroy',]]
+    );
+}));
+
+Route::group(
+    ['prefix' => 'v1'],
+    (function () {
+        Route::apiResources(
+            [
+                'product' => 'ProductController',
+                'category' => 'CategoryController'
+            ],
+            ['only' => ['index', 'show']]
+        );
+    }),
+
+);
 
 Route::get('/status', function () {
     return ['status' => 'OK'];
