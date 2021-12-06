@@ -51,13 +51,15 @@ class CategoryTest extends TestCase {
 
         parent::tearDown();
     }
+
     private function getCustomerToken() {
         return JWTAuth::fromUser(User::where('role_id', 2)->first());
     }
+
     private function getAdminToken() {
         return JWTAuth::fromUser(User::where('role_id', 1)->first());
     }
-
+    
     public function testGetAllCategories() {
         $resp = $this->json(
             'GET',
