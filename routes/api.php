@@ -44,6 +44,17 @@ Route::group(
 
 );
 
+Route::group(['prefix' => 'v1'], (function () {
+    Route::apiResources(['user' => 'UserController'], ['only' => ['store']]);
+}));
+
+Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
+    Route::apiResources(
+        ['user' => 'UserController'],
+        ['only' => ['index', 'show', 'update', 'destory']]);
+}));
+
+
 Route::get('/status', function () {
     return ['status' => 'OK'];
 });
