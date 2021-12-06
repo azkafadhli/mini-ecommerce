@@ -11,10 +11,10 @@ class CategorySeeder extends Seeder {
     public function run() {
         DB::table('categories')->insert(
             [
-                ['id' => 1, 'name' => 'Hobbies'],
-                ['id' => 2, 'name' => 'Electronics'],
-                ['id' => 3, 'name' => 'Video Game Consoles'],
-                ['id' => 4, 'name' => 'Books']
+                ['name' => 'Hobbies'],
+                ['name' => 'Electronics'],
+                ['name' => 'Video Game Consoles'],
+                ['name' => 'Books']
             ]
         );
     }

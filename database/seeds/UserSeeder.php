@@ -11,13 +11,11 @@ class UserSeeder extends Seeder {
      */
     public function run() {
         $admin = [
-            'id' => 1,
             'role_id' => 1,
             'name' => 'Aidan Brown',
             'email' => 'aidan.brown@example.com'
         ];
         $customer = [
-            'id' => 2,
             'role_id' => 2,
             'name' => 'Karolann Windler',
             'email' => 'karolann.windler@example.com'
