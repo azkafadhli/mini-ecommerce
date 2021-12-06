@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,6 +67,6 @@ class UserTest extends TestCase {
             );
         $resp
             ->assertStatus(200)
-            ->assertJson([['id' => 1],['id' => 2]]);
+            ->assertJson([['id' => 1]]);
     }
 }
