@@ -11,6 +11,9 @@ class Product extends Model {
     protected $fillable = ["name", "price"];
 
     public function categories() {
-        return $this->BelongsToMany('App\Category');
+        return $this->belongsToMany('App\Category');
+    }
+    public function cart() {
+        return $this->belongsToMany('App\User', 'App\CartItem');
     }
 }

@@ -41,7 +41,6 @@ Route::group(
             ['only' => ['index', 'show']]
         );
     }),
-
 );
 
 Route::group(['prefix' => 'v1'], (function () {
@@ -50,8 +49,12 @@ Route::group(['prefix' => 'v1'], (function () {
 
 Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
     Route::apiResources(
-        ['user' => 'UserController'],
-        ['only' => ['index', 'show', 'update', 'destroy']]);
+        [
+            'user' => 'UserController', 
+            'cart' => 'CartItemController'
+        ],
+        ['only' => ['index', 'show', 'update', 'destroy']]
+    );
 }));
 
 Route::get('/status', function () {

@@ -33,8 +33,15 @@ class UserController extends Controller {
         return $user;
     }
 
-    public function show(User $user) {
-        //
+    public function show(int $id) {
+        $userFromToken = auth()->user();
+        $user = User::with('cart')->find($id);
+        if (($userFromToken['id']==$user['id']) | (!User::isAdmin($user))) {
+            // TODO: return with user address
+            return $user;
+        }
+        
+        return response()->json(['status' => 'unauthorized'], 401);
     }
 
     public function update(Request $request, int $id) {

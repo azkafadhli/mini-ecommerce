@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\User;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class CartItem extends Model
-{
-    //
+class CartItem extends Pivot {
+    protected $table = 'cart_items';
 }

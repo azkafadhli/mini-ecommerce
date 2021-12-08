@@ -39,7 +39,9 @@ class ProductController extends Controller {
     }
 
     public function show(int $id) {
-        return Product::with(['categories'])->where('id', $id)->get();
+        $product = Product::with(['categories', 'cart'])->find($id);
+        
+        return $product;
     }
 
     public function update(Request $request, int $id) {

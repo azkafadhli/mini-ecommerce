@@ -22,5 +22,6 @@ class UserSeeder extends Seeder {
         ];
         factory(User::class, 1)->create($admin);
         factory(User::class, 1)->create($customer);
+        factory(User::class, 1)->create();
     }
 }
