@@ -2,63 +2,63 @@
 
 namespace App\Http\Controllers;
 
+use App\CartItem;
 use App\Order;
+use App\OrderDetails;
+use App\UserAddress;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
-class OrderController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+class OrderController extends Controller {
+    public function index() {
+        return Order::all();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        $validatedData = $request->validate(
+            [
+                'carts' => ['required', Rule::exists('cart_items', 'id')->where('user_id', auth()->user()->id)],
+                'address' => ['required', 'integer', Rule::exists('user_addresses', 'id')->where('user_id', auth()->user()->id)]
+            ]
+        );
+        
+        $order = Order::create(['user_addresses_id' => $validatedData['address']]);
+        
+        $productsToOrder = [];
+        foreach (CartItem::find($validatedData['carts']) as $cart) {
+            array_push(
+                $productsToOrder,
+                [
+                    'order_id'=> $order['id'], 
+                    'product_id' => $cart['product_id'],
+                    'quantity' => $cart['quantity'],
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]
+            );
+        }
+        OrderDetails::insert($productsToOrder);
+        CartItem::destroy($validatedData['carts']);
+        return Order::with('details')->find($order['id']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Order $order)
-    {
-        //
+    public function show(int $id) {
+        return Order::with('details')->find($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Order $order)
-    {
-        //
+    public function update(Request $request, int $id) {
+        $validatedData = $request->validate(
+            [
+                'user_addresses_id' => ['exists:user_addresses,id']
+            ]
+        );
+        $order = Order::find($id);
+        $order->update($validatedData);
+        return $order;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Order $order)
-    {
-        //
+    public function destroy(int $id) {
+        $order = Order::find($id);
+        return $order->delete();
     }
 }

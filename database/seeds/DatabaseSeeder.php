@@ -1,5 +1,6 @@
 <?php
 
+use App\OrderDetails;
 use App\UserAddress;
 use Illuminate\Database\Seeder;
 
@@ -19,6 +20,8 @@ class DatabaseSeeder extends Seeder {
                 ProductSeeder::class,
                 CategoryProductSeeder::class,
                 CartItemSeeder::class,
+                OrderSeeder::class,
+                OrderDetailsSeeder::class
             ]
         );
     }

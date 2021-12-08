@@ -10,6 +10,10 @@ class UserAddressSeeder extends Seeder {
         factory(UserAddress::class, 1)
             ->create(['is_main_address' => true, 'user_id' => 2]);
         factory(UserAddress::class, 1)
+        ->create(['is_main_address' => false, 'user_id' => 2]);
+        factory(UserAddress::class, 1)
             ->create(['is_main_address' => true, 'user_id' => 3]);
+            factory(UserAddress::class, 1)
+                ->create(['is_main_address' => false, 'user_id' => 3]);
     }
 }
