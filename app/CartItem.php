@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class CartItem extends Pivot {
     protected $table = 'cart_items';
+    public $timestamps = False;
 }

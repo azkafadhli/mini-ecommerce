@@ -50,6 +50,15 @@ Route::group(['prefix' => 'v1'], (function () {
 Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
     Route::apiResources(
         [
+            'cart' => 'CartItemController'
+        ],
+        ['only' => ['store']]
+    );
+}));
+
+Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
+    Route::apiResources(
+        [
             'user' => 'UserController', 
             'cart' => 'CartItemController'
         ],

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class CartItemController extends Controller {
     public function index() {
         $user = auth()->user();
-        
+
         if (!User::isAdmin($user)) {
             return response()->json(['status' => 'unauthorized'], 401);
         }
@@ -18,18 +18,42 @@ class CartItemController extends Controller {
     }
 
     public function store(Request $request) {
-        //
+        $user = User::find(auth()->user()->id);
+        $validatedData = $request->validate(
+            [
+                'product_id' => ['required', 'exists:products,id'],
+                'quantity' => ['required', 'numeric', 'gte:0']
+            ]
+        );
+        $user->cart()->attach($validatedData['product_id'], ['quantity' => $validatedData['quantity']]);
+        return response()->json($user, 201);
     }
 
     public function show(int $user_id) {
         //
     }
 
-    public function update(Request $request, CartItem $cartItem) {
-        //
+    public function update(Request $request, int $id) {
+        $cart = CartItem::find($id);
+        $user = auth()->user();
+        if (!($cart->user_id === $user->id)) {
+            return response()->json(['status' => 'unauthorized'], 401);
+        }
+        $validatedData = $request->validate(
+            [
+                'quantity' => ['required', 'numeric', 'gte:0']
+            ]
+        );
+        $cart->update($validatedData);
+        return $cart;
     }
 
-    public function destroy(CartItem $cartItem) {
-        //
+    public function destroy(int $id) {
+        $cart = CartItem::find($id);
+        $user = auth()->user();
+        if (!($cart->user_id === $user->id)) {
+            return response()->json(['status' => 'unauthorized'], 401);
+        }
+        return $cart->delete();
     }
 }
