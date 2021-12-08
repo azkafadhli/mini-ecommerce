@@ -24,7 +24,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
     Route::apiResources(
         [
             'product' => 'ProductController',
-            'category' => 'CategoryController'
+            'category' => 'CategoryController',
         ],
         ['only' => ['store', 'update', 'destroy',]]
     );
@@ -36,7 +36,7 @@ Route::group(
         Route::apiResources(
             [
                 'product' => 'ProductController',
-                'category' => 'CategoryController'
+                'category' => 'CategoryController',
             ],
             ['only' => ['index', 'show']]
         );
@@ -48,12 +48,7 @@ Route::group(['prefix' => 'v1'], (function () {
 }));
 
 Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
-    Route::apiResources(
-        [
-            'cart' => 'CartItemController'
-        ],
-        ['only' => ['store']]
-    );
+    Route::apiResources(['cart' => 'CartItemController'], ['only' => ['store']]);
 }));
 
 Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
@@ -65,6 +60,11 @@ Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
         ['only' => ['index', 'show', 'update', 'destroy']]
     );
 }));
+
+Route::group(['prefix' => 'v1', 'middleware' => 'jwt.verify'], (function () {
+    Route::apiResources(['address' => 'UserAddressController']);
+}));
+
 
 Route::get('/status', function () {
     return ['status' => 'OK'];

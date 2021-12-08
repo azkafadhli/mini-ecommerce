@@ -19,6 +19,7 @@ class CreateUserAddressesTable extends Migration
             $table->text('address');
             $table->boolean('is_main_address');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
