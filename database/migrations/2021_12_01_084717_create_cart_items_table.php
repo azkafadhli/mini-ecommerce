@@ -18,6 +18,7 @@ class CreateCartItemsTable extends Migration
             $table->foreignId('product_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->integer('quantity');
+            $table->unique(['product_id', 'user_id']);
         });
     }
 

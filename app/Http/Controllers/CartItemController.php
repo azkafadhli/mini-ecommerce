@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\CartItem;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CartItemController extends Controller {
     public function index() {
@@ -21,7 +22,11 @@ class CartItemController extends Controller {
         $user = User::find(auth()->user()->id);
         $validatedData = $request->validate(
             [
-                'product_id' => ['required', 'exists:products,id'],
+                'product_id' => [
+                    'required',
+                    'exists:products,id',
+                    Rule::unique('cart_items')->where('user_id', $user->id)
+                ],
                 'quantity' => ['required', 'numeric', 'gte:0']
             ]
         );
@@ -30,11 +35,14 @@ class CartItemController extends Controller {
     }
 
     public function show(int $user_id) {
-        //
+        //see App\User()->cart();
     }
 
     public function update(Request $request, int $id) {
         $cart = CartItem::find($id);
+        if (!$cart) {
+            return response()->json(['message' => 'Cart not found'], 400);
+        }
         $user = auth()->user();
         if (!($cart->user_id === $user->id)) {
             return response()->json(['status' => 'unauthorized'], 401);

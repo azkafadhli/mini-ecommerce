@@ -35,10 +35,8 @@ class UserController extends Controller {
 
     public function show(int $id) {
         $userFromToken = auth()->user();
-        $user = User::with('cart')->find($id);
-        if (($userFromToken['id']==$user['id']) | (!User::isAdmin($user))) {
-            // TODO: return with user address
-            return $user;
+        if (($userFromToken['id']==$id) | (User::isAdmin($userFromToken))) {
+            return User::with('cart')->find($id);
         }
         
         return response()->json(['status' => 'unauthorized'], 401);
